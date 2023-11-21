@@ -1,0 +1,81 @@
+# Design Patterns in Java
+
+## AbstractLinkedDeque
+
+AbstractLinkedDeque is an abstract class extending AbstractCollection and implementing LinkedDeque. It employs the Iterator design pattern, comprising key components:
+
+- **Iterator Interface (PeekingIterator\<E\>):** This interface outlines the requirements for iterating through deque elements.
+- **Concrete Iterator (AbstractLinkedIterator):** Serving as a concrete iterator, AbstractLinkedIterator implements the PeekingIterator interface, facilitating the traversal of the linked deque.
+- **Aggregate (AbstractLinkedDeque\<E\>):** Representing the aggregate (linked deque), this class is what clients aim to iterate over.
+
+Collaboration occurs through the `iterator()` method in AbstractLinkedDeque, returning an AbstractLinkedIterator instance for client deque traversal. The iterator, AbstractLinkedIterator, keeps tabs on the current position (cursor) and the preceding element during traversal.
+
+The PeekingIterator interface specifies methods like `hasNext()`, `peek()`, and `next()` for efficient element iteration.
+
+This design provides encapsulation, shielding the internal deque representation from clients, who can traverse it without knowledge of its intricacies. It also ensures flexibility, enabling clients to traverse the deque in various ways without altering its structure.
+
+## Scheduler Interface
+
+**Design Pattern: Factory Method**
+
+### Component
+
+- **Factory Method (`schedule`):** Within the Scheduler interface, the `schedule` method functions as the factory method. It declares the creation of a scheduled task, leaving the specific implementation to concrete subclasses.
+
+### Concrete Creators
+
+- **DisabledScheduler:** A concrete implementation of Scheduler that always returns a successfully completed future.
+- **SystemScheduler:** A concrete implementation using the system-wide scheduling thread.
+- **ExecutorServiceScheduler:** A concrete implementation that delegates to a provided ScheduledExecutorService.
+- **GuardedScheduler:** A concrete implementation that suppresses and logs any exception thrown by the delegate scheduler.
+
+### Collaboration
+
+- The Scheduler interface defines the `schedule` method, acting as the factory method for creating scheduled tasks.
+- Concrete classes (DisabledScheduler, SystemScheduler, ExecutorServiceScheduler, GuardedScheduler) provide specific implementations of the `schedule` method.
+- Clients have the flexibility to choose the appropriate Scheduler implementation based on their scheduling requirements, enhancing customization.
+
+### Benefits
+
+- **Flexibility:** Clients can select different Scheduler implementations to customize task scheduling behavior.
+- **Encapsulation:** The creation of scheduled tasks is encapsulated within the `schedule` method, shielding clients from the intricacies of task scheduling.
+
+### Static Factory Methods
+
+- `disabledScheduler():` Returns a DisabledScheduler instance.
+- `systemScheduler():` Returns a SystemScheduler instance.
+- `forScheduledExecutorService(ScheduledExecutorService scheduledExecutorService):` Returns an ExecutorServiceScheduler instance.
+- `guardedScheduler(Scheduler scheduler):` Returns a GuardedScheduler instance.
+
+These methods exemplify the Factory Method pattern by creating and returning various concrete implementations of the Scheduler interface, showcasing the pattern's application in task scheduling.
+
+## Adapter Pattern: InternalReference and Implementations
+
+In the Adapter Pattern, the InternalReference interface and its various implementations (LookupKeyReference, LookupKeyEqualsReference, WeakKeyReference, WeakKeyEqualsReference, WeakValueReference, SoftValueReference) play distinct roles:
+
+### Adapter Interface: InternalReference
+
+- **Role in Adapter Pattern:** Defines a common interface with methods (`get()`, `getKeyReference()`, `referenceEquals()`, `objectEquals()`) expected from all reference types.
+- **How it Functions:** Provides a unified interface, allowing different reference types to be used interchangeably within the caching system.
+
+### Adaptees: LookupKeyReference, LookupKeyEqualsReference, WeakKeyReference, WeakKeyEqualsReference, WeakValueReference, SoftValueReference
+
+- **Role in Adapter Pattern:** These classes implement the InternalReference interface, adapting specific reference types for integration into the caching library.
+- **How they Function:** Each class serves as an adapter for a particular reference type. For instance, LookupKeyReference adapts for lookup, WeakKeyReference and WeakKeyEqualsReference for weakly held keys, and WeakValueReference and SoftValueReference for weakly held values. They ensure that the specific reference types conform to the common interface defined by InternalReference.
+
+### Collaboration
+
+- Clients of the caching library interact with the InternalReference interface.
+- Concrete implementations (LookupKeyReference, LookupKeyEqualsReference, WeakKeyReference, WeakKeyEqualsReference, WeakValueReference, SoftValueReference) ensure that the diverse reference types seamlessly integrate into the caching system by adhering to the common InternalReference interface.
+
+In summary, the InternalReference acts as the common ground, providing a standard interface, while the concrete implementations serve as adapters, allowing different reference types to be used interchangeably in the caching library.
+
+## InternalReference Interface Summary
+
+- The InternalReference interface serves as the common ground for collaboration, allowing the caching system to interact with different reference types uniformly.
+- Other parts of the code that use references in the caching system can use InternalReference without worrying about the specific implementation details of each reference type.
+- Where another class can be easily added:
+  - If a new type of reference needs to be supported in the caching system, a new class implementing the InternalReference interface can be added.
+  - For example, if there's a need for a different type of weak reference, a new class can be created, and it only needs to implement the InternalReference methods.
+
+In summary, the InternalReference interface and its implementations in the provided code demonstrate the Adapter design pattern, allowing different types of references to be used interchangeably in the caching library.
